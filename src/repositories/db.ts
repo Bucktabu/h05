@@ -1,6 +1,7 @@
 import {MongoClient} from 'mongodb';
 import {blogType} from "../types/blogs-type";
 import {postType} from "../types/posts-type";
+import {userType} from "../types/users-type";
 import * as dotenv from "dotenv";
 dotenv.config()
 
@@ -11,6 +12,7 @@ const db = client.db('blogsAndPostsDb')
 
 export const blogsCollection = db.collection<blogType>('blogs') // почему единственное число?
 export const postsCollection = db.collection<postType>('posts')
+export const usersCollection = db.collection<userType>('users')
 
 export async function runDb() {
     try {

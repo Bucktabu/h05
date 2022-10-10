@@ -44,7 +44,7 @@ blogsRouter.get('/', async (req: Request, res: Response) => {
                        req.query.sortDirection?.toString(),
                        req.query.pageNumber?.toString(),
                        req.query.pageSize?.toString(),
-                       req.query.searchNameTerm?.toString()) // юрл это строка, почему нужно приводить к строке
+                       req.query.searchNameTerm?.toString())
 
     if (!pageWithBlogs) {
         return res.sendStatus(404)
