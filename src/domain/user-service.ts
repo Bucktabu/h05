@@ -22,6 +22,10 @@ export const usersService = {
         return newUser
     },
 
+    async giveUserById(userId: string): Promise<UserType | null> {
+        return await usersRepository.giveUserById(userId)
+    },
+
     async giveUsersPage(sortBy: string,
                         sortDirection: string,
                         pageNumber: string,
@@ -33,6 +37,10 @@ export const usersService = {
         const totalCount = await usersRepository.giveTotalCount(searchLoginTerm, searchEmailTerm)
 
         return paginationContentPage(pageNumber, pageSize, content, totalCount)
+    },
+
+    async deleteUserById(id: string): Promise<boolean> {
+        return await usersRepository.deleteUserById(id)
     },
 
     async checkCredential(loginOrEmail: string, password: string): Promise<boolean> {

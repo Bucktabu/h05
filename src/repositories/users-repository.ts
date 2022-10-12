@@ -2,16 +2,10 @@ import {blogsCollection, usersCollection} from "./db";
 import {UsersType, UserType} from "../types/user-type";
 import {giveSkipNumber} from "../helperFunctions";
 
-
 export const usersRepository = {
     async createNewUser(newUser: UserType): Promise<UserType> {
         await usersCollection.insertOne(newUser)
         return newUser
-    },
-
-    async findUserByLoginOrEmail(loginOrEmail: string) {
-        const user = await usersCollection.insertOne({$or: [{email: loginOrEmail}, {userName: loginOrEmail}]})
-        return user
     },
 
     async giveUsers(sortBy: string,
@@ -39,6 +33,10 @@ export const usersRepository = {
             .toArray()
     },
 
+    async giveUserById(userId: string): Promise<UserType | null> {
+        return await usersCollection.findOne({id: userId})
+    },
+
     async giveTotalCount(searchLoginTerm: string, searchEmailTerm: string): Promise<number> {
 
         if (searchLoginTerm) {
@@ -51,4 +49,20 @@ export const usersRepository = {
 
         return await blogsCollection.countDocuments({})
     },
+
+    async deleteUserById(id: string): Promise<boolean> {
+        const result = await usersCollection.deleteOne({id: id})
+
+        return result.deletedCount === 1
+    },
+
+    async deleteAllUsers(): Promise<boolean> {
+        try {
+            await usersCollection.deleteMany({})
+            return true
+        } catch (e) {
+            console.log('blogsCollection => deleteAllBlogs =>', e)
+            return false
+        }
+    }
 }

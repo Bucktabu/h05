@@ -1,11 +1,17 @@
 import {Request, Response, Router} from "express";
+
 import {authenticationGuardMiddleware} from "../middlewares/authentication-guard-middleware";
 import {userRouterValidationMiddleware} from "../middlewares/userRouter-validation-middleware";
+import {usersQueryValidationMiddleware} from "../middlewares/query-validation-middleware";
+
 import {usersService} from "../domain/user-service";
-import {ContentPageType} from "../types/content-page-type";
-import {queryValidationMiddleware, usersQueryValidationMiddleware} from "../middlewares/query-validation-middleware";
-import {RequestWithQuery} from "../types/request-types";
+
 import {QueryParams} from "../models/queryParams";
+import {URIParams} from "../models/URIParams";
+
+import {ContentPageType} from "../types/content-page-type";
+import {RequestWithParams, RequestWithQuery} from "../types/request-types";
+
 
 export const usersRouter = Router({})
 
@@ -39,3 +45,17 @@ usersRouter.get('/',
 
     res.status(200).send(pageWithUsers)
 })
+
+usersRouter.delete('/:id',
+    authenticationGuardMiddleware,
+    async (req: RequestWithParams<URIParams>, res: Response) => {
+
+        const isDeleted = await usersService.deleteUserById(req.params.id)
+
+        if (!isDeleted) {
+            return res.sendStatus(404)
+        }
+
+        res.status(204)
+    }
+)

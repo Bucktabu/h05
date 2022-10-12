@@ -27,11 +27,11 @@ export const blogsRepository = {
         return await blogsCollection.countDocuments({name: {$regex: searchNameTerm, $options: 'i'}})
     },
 
-    async giveBlogById (id: string): Promise<BlogType | null> {
+    async giveBlogById(id: string): Promise<BlogType | null> {
         return await blogsCollection.findOne({id: id}, {projection: {_id: false}})
     },
 
-    async giveBlogName (id: string): Promise<string> {
+    async giveBlogName(id: string): Promise<string> {
         const blog = await blogsRepository.giveBlogById(id)
 
         if (!blog) {
