@@ -1,19 +1,19 @@
-import {blogsType} from "./types/blogs-type";
-import {postsType} from "./types/posts-type";
-import {contentOnThePage, currentPage, giveSkipNumber, pagesCount, totalCount} from "./helperFunctions";
+import {givePagesCount} from "./helperFunctions";
+import {BlogsType} from "./types/blogs-type";
+import {PostsType} from "./types/posts-type";
+import {UsersType} from "./types/user-type";
 
-export const paginationContentPage = (sortBy: string | undefined,
-                                      sortDirection: string | undefined,
-                                      pageNumber: string | null | undefined, // номер страницы, которая будет возвращена
-                                      pageSize: string | null | undefined,
-                                      content: blogsType | postsType) => {
+export const paginationContentPage = (pageNumber: string,
+                                      pageSize: string,
+                                      content: BlogsType | PostsType | UsersType,
+                                      totalCount: number) => {
 
     const pageWithContent = {
-        "pagesCount": pagesCount(pageSize, content),
-        "page": currentPage(pageNumber),
-        "pageSize": contentOnThePage(pageSize),
-        "totalCount": totalCount(content),
-        "items": content.slice(giveSkipNumber(pageNumber, pageSize), giveSkipNumber(pageNumber, pageSize) + contentOnThePage(pageSize))
+        "pagesCount": givePagesCount(totalCount, pageSize),
+        "page": Number(pageNumber),
+        "pageSize": Number(pageSize),
+        "totalCount": totalCount,
+        "items": content
     }
 
     return pageWithContent

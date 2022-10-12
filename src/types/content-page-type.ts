@@ -1,11 +1,11 @@
-import {blogsType} from "./blogs-type";
-import {postsType} from "./posts-type";
-import {usersType} from "./users-type";
+import {BlogsType} from "./blogs-type";
+import {PostsType} from "./posts-type";
+import {UsersType} from "./user-type";
 
-export type contentPageType = {
+export type ContentPageType = {
     pagesCount: number, // всего страниц
     page: number, // номер страницы
     pageSize: number, // количество элементов на странице
     totalCount: number, // всего элементов
-    items: blogsType | postsType | usersType
+    items: BlogsType | PostsType | UsersType
 }

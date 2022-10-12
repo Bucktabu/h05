@@ -1,36 +1,34 @@
 import {postsCollection} from "./db";
-import {postType} from "../types/posts-type";
+import {PostsType, PostType} from "../types/posts-type";
+import {giveSkipNumber} from "../helperFunctions";
 
 export const postsRepository = {
-    async createNewPost(newPost: postType): Promise<postType> {
+    async createNewPost(newPost: PostType): Promise<PostType> {
         await postsCollection.insertOne(newPost)
 
         return newPost
     },
 
-    async givePosts(blogId: string | undefined, sortBy: string | undefined, sortDirection: string | undefined) {
-
-        const filter: any = {}
-
-        if (blogId) {
-            filter.blogId = blogId
-        }
-
-        if (!sortBy) {
-            sortBy = 'createdAt'
-        }
-
-        if (!sortDirection) {
-            sortDirection = 'desc'
-        }
+    async givePosts(sortBy: string,
+                    sortDirection: 'asc' | 'desc',
+                    pageNumber: string,
+                    pageSize: string,
+                    blogId: string | undefined): Promise<PostsType> {
 
         return await postsCollection
-            .find(filter, {projection: {_id: false}})
+            .find({blogId: {$regex: blogId ? blogId : '', $options: 'i'}}, {projection: {_id: false}})
             .sort(sortBy, sortDirection === 'asc' ? 1 : -1)
+            .skip(giveSkipNumber(pageNumber, pageSize))
+            .limit(Number(pageSize))
             .toArray()
     },
 
-    async givePostById(id: string): Promise<postType | null> {
+    async giveTotalCount(blogId: string | undefined): Promise<number> {
+
+        return await postsCollection.countDocuments({blogId: {$regex: blogId ? blogId : '', $options: 'i'}})
+    },
+
+    async givePostById(id: string): Promise<PostType | null> {
        return await postsCollection.findOne({id:id}, {projection: {_id: false}})
     },
 

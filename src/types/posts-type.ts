@@ -1,11 +1,11 @@
-export type postType = {
+export type PostType = {
     id: string,
     title: string,
-    shortDescription: string,
+    shortDescription: string
     content: string,
     blogId: string,
     blogName: string,
     createdAt: string
 }
 
-export type postsType = postType[]
+export type PostsType = PostType[]

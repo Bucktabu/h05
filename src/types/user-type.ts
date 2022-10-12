@@ -1,4 +1,4 @@
-export type userType = {
+export type UserType = {
     id: string,
     login: string,
     email: string,
@@ -7,4 +7,4 @@ export type userType = {
     createdAt: string
 }
 
-export type usersType = userType[]
+export type UsersType = UserType[]

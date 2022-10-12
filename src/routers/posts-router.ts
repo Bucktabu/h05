@@ -1,17 +1,32 @@
-import {Request, Response, Router} from "express";
+import {Response, Router} from "express";
+
 import {postRouterValidation} from "../middlewares/postRouter-validation-middleware";
-import {postsService} from "../domain/posts-service";
-import {postType} from "../types/posts-type";
-import {contentPageType} from "../types/contentPage-type";
 import {authenticationGuardMiddleware} from "../middlewares/authentication-guard-middleware";
+import {queryValidationMiddleware} from "../middlewares/query-validation-middleware";
+
+import {postsService} from "../domain/posts-service";
+
+import {QueryParams} from "../models/queryParams";
+import {PostsCreateNewPost} from "../models/postsCreateNewPost";
+import {PostsUpdatePost} from "../models/postsUpdatePost";
+import {URIParams} from "../models/URIParams";
+
+import {PostType} from "../types/posts-type";
+import {ContentPageType} from "../types/content-page-type";
+import {RequestWithBody,
+        RequestWithParams,
+        RequestWithParamsAndBody,
+        RequestWithQuery} from "../types/request-types";
 
 export const postsRouter = Router({})
 
 postsRouter.post('/',
     authenticationGuardMiddleware,
     ...postRouterValidation,
-    async (req: Request, res: Response) => {
-        const newPost: postType = await postsService.createNewPost(req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
+    async (req: RequestWithBody<PostsCreateNewPost>,
+           res: Response<PostType>) => {
+
+        const newPost = await postsService.createNewPost(req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
 
         if (!newPost) {
             return res.sendStatus(404)
@@ -21,13 +36,17 @@ postsRouter.post('/',
     }
 )
 
-postsRouter.get('/', async (req: Request, res: Response) => {
-    const pageWithPosts: contentPageType = await postsService
-        .givePostsPage(
-            req.query.sortBy?.toString(),
-                      req.query.sortDirection?.toString(),
-                      req.query.pageNumber?.toString(),
-                      req.query.pageSize?.toString())
+postsRouter.get('/',
+    ...queryValidationMiddleware,
+    async (req: RequestWithQuery<QueryParams>,
+           res: Response<ContentPageType>) => {
+
+    const pageWithPosts: ContentPageType = await postsService
+        .givePostsPage(req.query.sortBy,
+                       req.query.sortDirection,
+                       req.query.pageNumber,
+                       req.query.pageSize,
+                       req.query.blogId)
 
     if (!pageWithPosts) {
         return res.sendStatus(404)
@@ -36,8 +55,11 @@ postsRouter.get('/', async (req: Request, res: Response) => {
     res.status(200).send(pageWithPosts)
 })
 
-postsRouter.get('/:id', async (req: Request, res: Response) => {
-    const post: postType | null = await postsService.givePostById(req.params.id)
+postsRouter.get('/:id',
+    async (req: RequestWithParams<URIParams>,
+                   res: Response<PostType>) => {
+
+    const post = await postsService.givePostById(req.params.id)
 
     if (!post) {
         return res.sendStatus(404)
@@ -49,8 +71,15 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
 postsRouter.put('/:id',
     authenticationGuardMiddleware,
     ...postRouterValidation,
-    async (req: Request, res: Response) => {
-        const isUpdate = await postsService.updatePost(req.params.id, req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
+    async (req: RequestWithParamsAndBody<URIParams, PostsUpdatePost>,
+           res: Response<PostType | null>) => {
+
+        const isUpdate = await postsService
+            .updatePost(req.params.id,
+                        req.body.title,
+                        req.body.shortDescription,
+                        req.body.content,
+                        req.body.blogId)
 
         if (!isUpdate) {
             return res.sendStatus(404)
@@ -63,7 +92,9 @@ postsRouter.put('/:id',
 
 postsRouter.delete('/:id',
     authenticationGuardMiddleware,
-    async (req: Request, res: Response) => {
+    async (req: RequestWithParams<URIParams>,
+           res: Response) => {
+
         const isDeleted = await postsService.deletePostById(req.params.id)
 
         if (isDeleted) {

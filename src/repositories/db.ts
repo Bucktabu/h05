@@ -1,18 +1,21 @@
-import {MongoClient} from 'mongodb';
-import {blogType} from "../types/blogs-type";
-import {postType} from "../types/posts-type";
-import {userType} from "../types/users-type";
 import * as dotenv from "dotenv";
+import {MongoClient} from 'mongodb';
+import {BlogType} from "../types/blogs-type";
+import {PostType} from "../types/posts-type";
+import {UserType} from "../types/user-type";
+
 dotenv.config()
 
-const mongoUri = process.env.mongoURI || 'mongodb://0.0.0.0:27017/?maxPoolSize=20&w=majority';
+const mongoUri = process.env.MONGO_URI || 'mongodb://0.0.0.0:27017/?maxPoolSize=20&w=majority';
+
+//const mongoUri = process.env.MONGO_URI || ""
 
 const client = new MongoClient(mongoUri)
 const db = client.db('blogsAndPostsDb')
 
-export const blogsCollection = db.collection<blogType>('blogs') // почему единственное число?
-export const postsCollection = db.collection<postType>('posts')
-export const usersCollection = db.collection<userType>('users')
+export const blogsCollection = db.collection<BlogType>('blogs') // почему единственное число?
+export const postsCollection = db.collection<PostType>('posts')
+export const usersCollection = db.collection<UserType>('users')
 
 export async function runDb() {
     try {

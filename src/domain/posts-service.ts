@@ -1,17 +1,22 @@
 import {postsRepository} from "../repositories/posts-repository";
 import {blogsRepository} from "../repositories/blogs-repository";
-import {postType} from "../types/posts-type";
-import {contentPageType} from "../types/contentPage-type";
+import {PostType} from "../types/posts-type";
+import {ContentPageType} from "../types/content-page-type";
+
 import {paginationContentPage} from "../paginationContentPage";
 
 export const postsService = {
-    async createNewPost(title: string, shortDescription: string, content: string, blogId: string): Promise<postType> {
-        const newPost: postType = {
+    async createNewPost(title: string,
+                        shortDescription: string,
+                        content: string,
+                        blogId: string): Promise<PostType> {
+
+        const newPost: PostType = {
             id: String(+new Date()),
-            title: title,
-            shortDescription: shortDescription,
-            content: content,
-            blogId: blogId,
+            title,
+            shortDescription,
+            content,
+            blogId,
             blogName: await blogsRepository.giveBlogName(blogId),
             createdAt: new Date().toISOString()
         }
@@ -20,26 +25,32 @@ export const postsService = {
         return newPost
     },
 
-    async givePostsPage(sortBy?: string,
-                        sortDirection?: string,
-                        pageNumber?: string,
-                        pageSize?: string,
-                        blogId?: string)
-                            : Promise<contentPageType> {
-        const content = await postsRepository.givePosts(blogId, sortBy, sortDirection)
+    async givePostsPage(sortBy: string,
+                        sortDirection: 'asc' | 'desc',
+                        pageNumber: string,
+                        pageSize: string,
+                        blogId?: string) : Promise<ContentPageType> {
 
-        return paginationContentPage(sortBy, sortDirection, pageNumber, pageSize, content)
+        const content = await postsRepository.givePosts(sortBy, sortDirection, pageNumber, pageSize, blogId)
+        const totalCount = await postsRepository.giveTotalCount(blogId)
+
+        return paginationContentPage(pageNumber, pageSize, content, totalCount)
     },
 
-    async givePostById(id: string): Promise<postType | null> {
+    async givePostById(id: string): Promise<PostType | null> {
         return await postsRepository.givePostById(id)
     },
 
-    async updatePost(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<boolean> {
+    async updatePost(id: string,
+                     title: string,
+                     shortDescription: string,
+                     content: string,
+                     blogId: string): Promise<boolean> {
+
         return await postsRepository.updatePost(id, title, shortDescription, content, blogId)
     },
 
     async deletePostById(id: string): Promise<boolean> {
         return await postsRepository.deletePostById(id)
-    },
+    }
 }

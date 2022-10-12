@@ -1,12 +1,12 @@
 import {blogsRepository} from "../repositories/blogs-repository";
-import {blogType} from "../types/blogs-type";
-import {contentPageType} from "../types/contentPage-type";
+import {BlogType} from "../types/blogs-type";
+import {ContentPageType} from "../types/content-page-type";
 import {paginationContentPage} from "../paginationContentPage";
 
-
 export const blogsService = {
-    async createNewBlog(name: string, youtubeUrl: string): Promise<blogType> {
-        const newBlog: blogType = {
+    async createNewBlog(name: string, youtubeUrl: string): Promise<BlogType> {
+
+        const newBlog: BlogType = {
             id: String(+new Date()),
             name: name,
             youtubeUrl: youtubeUrl,
@@ -17,18 +17,19 @@ export const blogsService = {
         return newBlog
     },
 
-    async giveBlogsPage(sortBy: string | undefined,
-                        sortDirection: string | undefined,
-                        pageNumber: string | null | undefined, // номер страницы, которая будет возвращена
-                        pageSize: string | null | undefined,
-                        searchNameTerm?: string) // количество элементов на странице
-                            : Promise<contentPageType> {
-        const content = await blogsRepository.giveBlogs(sortBy, sortDirection, pageNumber, pageSize, searchNameTerm)
+    async giveBlogsPage(searchNameTerm: string,
+                        sortBy: string,
+                        sortDirection: string,
+                        pageNumber: string,
+                        pageSize: string): Promise<ContentPageType> {
 
-        return paginationContentPage(sortBy, sortDirection, pageNumber, pageSize, content)
+        const content = await blogsRepository.giveBlogs(searchNameTerm, sortBy, sortDirection, pageNumber, pageSize)
+        const totalCount = await blogsRepository.giveTotalCount(searchNameTerm)
+
+        return paginationContentPage(pageNumber, pageSize, content, totalCount)
     },
 
-    async giveBlogById(id: string): Promise<blogType | null> {
+    async giveBlogById(id: string): Promise<BlogType | null> {
         return await blogsRepository.giveBlogById(id)
     },
 
