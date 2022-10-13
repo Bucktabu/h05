@@ -15,18 +15,18 @@ export const usersRepository = {
                     searchLoginTerm: string,
                     searchEmailTerm: string): Promise<UsersType> {
 
-        // const filter: any = {}
-        //
-        // if (searchLoginTerm) {
-        //     filter.login = {$regex: searchLoginTerm, $options: 'i'}
-        // }
-        //
-        // if (searchEmailTerm) {
-        //     filter.email = {$regex: searchEmailTerm, $options: 'i'}
-        // }
+        const filter: any = {}
+
+        if (searchLoginTerm) {
+            filter.login = {$regex: searchLoginTerm, $options: 'i'}
+        }
+
+        if (searchEmailTerm) {
+            filter.email = {$regex: searchEmailTerm, $options: 'i'}
+        }
 
         return await usersCollection
-            .find({$or: [{email: {$regex: searchLoginTerm}}, {login: {$regex: searchEmailTerm}}]}, {projection: {_id: false}})
+            .find(filter, {projection: {_id: false}})
             .sort(sortBy, sortDirection === 'asc' ? 1 : -1)
             .skip(giveSkipNumber(pageNumber, pageSize))
             .limit(Number(pageSize))
@@ -43,7 +43,18 @@ export const usersRepository = {
         //     return await blogsCollection.countDocuments({email: {$regex: searchEmailTerm, $options: 'i'}})
         // }
 
-        return await usersCollection.countDocuments({$or: [{email: {$regex: searchLoginTerm}}, {login: {$regex: searchEmailTerm}}]})
+        const filter: any = {}
+
+        if (searchLoginTerm) {
+            filter.login = {$regex: searchLoginTerm, $options: 'i'}
+        }
+
+        if (searchEmailTerm) {
+            filter.email = {$regex: searchEmailTerm, $options: 'i'}
+        }
+
+        const count =  await usersCollection.find(filter).toArray()
+        return count.length
     },
 
     // async giveUserById(userId: string): Promise<UserType | null> {
