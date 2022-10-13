@@ -33,10 +33,6 @@ export const usersRepository = {
             .toArray()
     },
 
-    async giveUserById(userId: string): Promise<UserType | null> {
-        return await usersCollection.findOne({id: userId})
-    },
-
     async giveTotalCount(searchLoginTerm: string, searchEmailTerm: string): Promise<number> {
 
         if (searchLoginTerm) {
@@ -48,6 +44,15 @@ export const usersRepository = {
         }
 
         return await blogsCollection.countDocuments({})
+    },
+
+    // async giveUserById(userId: string): Promise<UserType | null> {
+    //     return await usersCollection.findOne({id: userId})
+    // },
+
+    async findUserByLoginOrEmail(loginOrEmail: string) {
+        const user = await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+        return user
     },
 
     async deleteUserById(id: string): Promise<boolean> {

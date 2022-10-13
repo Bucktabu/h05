@@ -6,19 +6,20 @@ import {usersQueryValidationMiddleware} from "../middlewares/query-validation-mi
 
 import {usersService} from "../domain/user-service";
 
-import {QueryParams} from "../models/queryParams";
-import {URIParams} from "../models/URIParams";
+import {QueryParameters} from "../models/queryParameters";
+import {URIParameters} from "../models/URIParameters";
 
 import {ContentPageType} from "../types/content-page-type";
-import {RequestWithParams, RequestWithQuery} from "../types/request-types";
-
+import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../types/request-types";
+import {UserType} from "../types/user-type";
+import {CreateNewUser} from "../models/createNewUser";
 
 export const usersRouter = Router({})
 
 usersRouter.post('/',
     authenticationGuardMiddleware,
     ...userRouterValidationMiddleware,
-    async (req: Request, res: Response) => {
+    async (req: RequestWithBody<CreateNewUser>, res: Response) => {
         const newUser = await usersService.createNewUser(req.body.login, req.body.password, req.body.email)
 
         if (!newUser) {
@@ -30,7 +31,7 @@ usersRouter.post('/',
 
 usersRouter.get('/',
     ...usersQueryValidationMiddleware,
-    async (req: RequestWithQuery<QueryParams>, res: Response) => {
+    async (req: RequestWithQuery<QueryParameters>, res: Response) => {
     const pageWithUsers: ContentPageType = await usersService
         .giveUsersPage(req.query.sortBy,
                        req.query.sortDirection,
@@ -48,7 +49,7 @@ usersRouter.get('/',
 
 usersRouter.delete('/:id',
     authenticationGuardMiddleware,
-    async (req: RequestWithParams<URIParams>, res: Response) => {
+    async (req: RequestWithParams<URIParameters>, res: Response) => {
 
         const isDeleted = await usersService.deleteUserById(req.params.id)
 

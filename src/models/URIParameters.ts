@@ -1,4 +1,4 @@
-export type URIParams = {
+export type URIParameters = {
     /**
      * Id in IRI params
      */

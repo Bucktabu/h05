@@ -8,8 +8,6 @@ dotenv.config()
 
 const mongoUri = process.env.MONGO_URI || 'mongodb://0.0.0.0:27017/?maxPoolSize=20&w=majority';
 
-//const mongoUri = process.env.MONGO_URI || ""
-
 const client = new MongoClient(mongoUri)
 const db = client.db('blogsAndPostsDb')
 

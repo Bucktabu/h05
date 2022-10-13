@@ -6,10 +6,10 @@ import {queryValidationMiddleware} from "../middlewares/query-validation-middlew
 
 import {postsService} from "../domain/posts-service";
 
-import {QueryParams} from "../models/queryParams";
+import {QueryParameters} from "../models/queryParameters";
 import {PostsCreateNewPost} from "../models/postsCreateNewPost";
 import {PostsUpdatePost} from "../models/postsUpdatePost";
-import {URIParams} from "../models/URIParams";
+import {URIParameters} from "../models/URIParameters";
 
 import {PostType} from "../types/posts-type";
 import {ContentPageType} from "../types/content-page-type";
@@ -38,7 +38,7 @@ postsRouter.post('/',
 
 postsRouter.get('/',
     ...queryValidationMiddleware,
-    async (req: RequestWithQuery<QueryParams>,
+    async (req: RequestWithQuery<QueryParameters>,
            res: Response<ContentPageType>) => {
 
     const pageWithPosts: ContentPageType = await postsService
@@ -56,7 +56,7 @@ postsRouter.get('/',
 })
 
 postsRouter.get('/:id',
-    async (req: RequestWithParams<URIParams>,
+    async (req: RequestWithParams<URIParameters>,
                    res: Response<PostType>) => {
 
     const post = await postsService.givePostById(req.params.id)
@@ -71,7 +71,7 @@ postsRouter.get('/:id',
 postsRouter.put('/:id',
     authenticationGuardMiddleware,
     ...postRouterValidation,
-    async (req: RequestWithParamsAndBody<URIParams, PostsUpdatePost>,
+    async (req: RequestWithParamsAndBody<URIParameters, PostsUpdatePost>,
            res: Response<PostType | null>) => {
 
         const isUpdate = await postsService
@@ -92,7 +92,7 @@ postsRouter.put('/:id',
 
 postsRouter.delete('/:id',
     authenticationGuardMiddleware,
-    async (req: RequestWithParams<URIParams>,
+    async (req: RequestWithParams<URIParameters>,
            res: Response) => {
 
         const isDeleted = await postsService.deletePostById(req.params.id)

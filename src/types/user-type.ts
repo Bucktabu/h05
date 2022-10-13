@@ -2,8 +2,8 @@ export type UserType = {
     id: string,
     login: string,
     email: string,
-    passwordHash: string,
-    passwordSalt: string,
+    // passwordHash: string,
+    // passwordSalt: string,
     createdAt: string
 }
 

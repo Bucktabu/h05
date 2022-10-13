@@ -1,10 +1,10 @@
 import {NextFunction, Request, Response} from "express";
 import {SortDirection, SortParameters} from "../models/sortParameters";
-import {URIParams} from "../models/URIParams";
+import {URIParameters} from "../models/URIParameters";
 import {RequestWithParamsAndQuery} from "../types/request-types";
-import {QueryParams} from "../models/queryParams";
+import {QueryParameters} from "../models/queryParameters";
 
-const sortByValidation = (req: RequestWithParamsAndQuery<URIParams, QueryParams>,
+const sortByValidation = (req: RequestWithParamsAndQuery<URIParameters, QueryParameters>,
                           res: Response,
                           next: NextFunction) => {
 
@@ -22,7 +22,7 @@ const sortByValidation = (req: RequestWithParamsAndQuery<URIParams, QueryParams>
     next()
 }
 
-const sortDirectionValidation = (req: RequestWithParamsAndQuery<URIParams, QueryParams>,
+const sortDirectionValidation = (req: RequestWithParamsAndQuery<URIParameters, QueryParameters>,
                                  res: Response,
                                  next: NextFunction) => {
 
