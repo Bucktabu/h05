@@ -9,7 +9,6 @@ const contentValidation = body('content').isString().trim().isLength(({min: 3, m
 export const blogIdValidation = body('blogId').isString()
     .custom(async (id: string) => {
         const blog = await blogsRepository.giveBlogById(id)
-        console.log('blog id validation ', blog)
 
         if (!blog) {
             throw new Error('blog not found')

@@ -22,10 +22,6 @@ usersRouter.post('/',
     async (req: RequestWithBody<CreateNewUser>, res: Response) => {
         const newUser = await usersService.createNewUser(req.body.login, req.body.password, req.body.email)
 
-        if (!newUser) {
-            return res.sendStatus(404)
-        }
-
         res.status(201).send(newUser)
     })
 

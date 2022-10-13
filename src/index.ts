@@ -4,6 +4,7 @@ import{blogsRouter} from "./routers/blogs-router"
 import{postsRouter} from "./routers/posts-router"
 import {authRouter} from "./routers/auth-router";
 import {runDb} from "./repositories/db";
+import {usersRouter} from "./routers/users-router";
 
 export const app = express()
 
@@ -14,6 +15,7 @@ app.use(express.json()) // add body-parser
 app.use('/testing', testingRouter)
 app.use('/blogs', blogsRouter)
 app.use('/posts', postsRouter)
+app.use('/users', usersRouter)
 app.use('/auth', authRouter)
 
 const startApp = async () => {
