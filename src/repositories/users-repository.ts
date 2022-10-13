@@ -43,7 +43,7 @@ export const usersRepository = {
         //     return await blogsCollection.countDocuments({email: {$regex: searchEmailTerm, $options: 'i'}})
         // }
 
-        return await blogsCollection.countDocuments({$or: [{email: {$regex: searchLoginTerm}}, {login: {$regex: searchEmailTerm}}]})
+        return await usersCollection.countDocuments({$or: [{email: {$regex: searchLoginTerm}}, {login: {$regex: searchEmailTerm}}]})
     },
 
     // async giveUserById(userId: string): Promise<UserType | null> {
