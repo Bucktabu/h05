@@ -15,18 +15,18 @@ export const usersRepository = {
                     searchLoginTerm: string,
                     searchEmailTerm: string): Promise<UsersType> {
 
-        const filter: any = {}
-
-        if (searchLoginTerm) {
-            filter.login = {$regex: searchLoginTerm, $options: 'i'}
-        }
-
-        if (searchEmailTerm) {
-            filter.email = {$regex: searchEmailTerm, $options: 'i'}
-        }
+        // const filter: any = {}
+        //
+        // if (searchLoginTerm) {
+        //     filter.login = {$regex: searchLoginTerm, $options: 'i'}
+        // }
+        //
+        // if (searchEmailTerm) {
+        //     filter.email = {$regex: searchEmailTerm, $options: 'i'}
+        // }
 
         return await usersCollection
-            .find(filter, {projection: {_id: false}})
+            .find({$or: [{email: {$regex: searchLoginTerm}}, {login: {$regex: searchEmailTerm}}]}, {projection: {_id: false}})
             .sort(sortBy, sortDirection === 'asc' ? 1 : -1)
             .skip(giveSkipNumber(pageNumber, pageSize))
             .limit(Number(pageSize))
@@ -35,15 +35,15 @@ export const usersRepository = {
 
     async giveTotalCount(searchLoginTerm: string, searchEmailTerm: string): Promise<number> {
 
-        if (searchLoginTerm) {
-            return await blogsCollection.countDocuments({login: {$regex: searchLoginTerm, $options: 'i'}})
-        }
+        // if (searchLoginTerm) {
+        //     return await blogsCollection.countDocuments({login: {$regex: searchLoginTerm, $options: 'i'}})
+        // }
+        //
+        // if (searchEmailTerm) {
+        //     return await blogsCollection.countDocuments({email: {$regex: searchEmailTerm, $options: 'i'}})
+        // }
 
-        if (searchEmailTerm) {
-            return await blogsCollection.countDocuments({email: {$regex: searchEmailTerm, $options: 'i'}})
-        }
-
-        return await blogsCollection.countDocuments({})
+        return await blogsCollection.countDocuments({$or: [{email: {$regex: searchLoginTerm}}, {login: {$regex: searchEmailTerm}}]})
     },
 
     // async giveUserById(userId: string): Promise<UserType | null> {
