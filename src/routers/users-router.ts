@@ -20,6 +20,7 @@ usersRouter.post('/',
     authenticationGuardMiddleware,
     ...userRouterValidationMiddleware,
     async (req: RequestWithBody<CreateNewUser>, res: Response) => {
+
         const newUser = await usersService.createNewUser(req.body.login, req.body.password, req.body.email)
 
         res.status(201).send(newUser)

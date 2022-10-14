@@ -19,13 +19,14 @@ export type UserDBType = {
     createdAt: string
 }
 
-export const giveNewUser = (userDB: UserDBType) => {
-    const newUser: UserType = {
+export type UsersDBType = UserDBType[]
+
+
+export const usersDBtoUserType = (userDB: UserDBType) => {
+    return {
         id: userDB.id,
         login: userDB.login,
         email: userDB.email,
         createdAt: userDB.createdAt
     }
-
-    return newUser
 }

@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import {usersRepository} from "../repositories/users-repository";
-import {giveNewUser, UserDBType, UserType} from "../types/user-type";
+import {UserDBType, usersDBtoUserType, UserType} from "../types/user-type";
 import {ContentPageType} from "../types/content-page-type";
 import {paginationContentPage} from "../paginationContentPage";
 import {ObjectId} from "mongodb";
@@ -23,7 +23,7 @@ export const usersService = {
 
         const createdNewUser = await usersRepository.createNewUser(createNewUser)
 
-        return giveNewUser(<UserDBType>createdNewUser)
+        return usersDBtoUserType(<UserDBType>createdNewUser)
     },
 
     // async giveUserById(userId: string): Promise<UserType | null> {
@@ -37,7 +37,10 @@ export const usersService = {
                         searchLoginTerm: string,
                         searchEmailTerm: string): Promise<ContentPageType> {
 
-        const content = await usersRepository.giveUsers(sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm)
+        const contentDB = await usersRepository.giveUsers(sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm)
+
+        const content = contentDB.map(userDB => usersDBtoUserType(<UserDBType>userDB))
+
         const totalCount = await usersRepository.giveTotalCount(searchLoginTerm, searchEmailTerm)
 
         return paginationContentPage(pageNumber, pageSize, content, totalCount)
