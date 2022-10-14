@@ -1,11 +1,15 @@
-import {blogsCollection, usersCollection} from "./db";
-import {UsersType, UserType} from "../types/user-type";
+import {usersCollection} from "./db";
+import {UserDBType, UsersType} from "../types/user-type";
 import {giveSkipNumber} from "../helperFunctions";
 
 export const usersRepository = {
-    async createNewUser(newUser: UserType): Promise<UserType> {
-        await usersCollection.insertOne(newUser)
-        return newUser
+    async createNewUser(newUser: UserDBType): Promise<UserDBType | null> {
+        try {
+            await usersCollection.insertOne(newUser)
+            return newUser
+        } catch (e) {
+            return null
+        }
     },
 
     async giveUsers(sortBy: string,
@@ -26,7 +30,14 @@ export const usersRepository = {
         // }
 
         return await usersCollection
-            .find({$or: [{login: {$regex: searchLoginTerm, $options: 'i'}}, {email: {$regex: searchEmailTerm, $options: 'i'}}]}, {projection: {_id: false}})
+            .find({
+                $or: [{login: {$regex: searchLoginTerm, $options: 'i'}}, {
+                    email: {
+                        $regex: searchEmailTerm,
+                        $options: 'i'
+                    }
+                }]
+            }, {projection: {_id: false, passwordHash: false, passwordSalt: false}})
             .sort(sortBy, sortDirection === 'asc' ? 1 : -1)
             .skip(giveSkipNumber(pageNumber, pageSize))
             .limit(Number(pageSize))
@@ -43,8 +54,7 @@ export const usersRepository = {
         //     return await blogsCollection.countDocuments({email: {$regex: searchEmailTerm, $options: 'i'}})
         // }
 
-        const count = await usersCollection.find({$or: [{login: {$regex: searchLoginTerm, $options: 'i'}}, {email: {$regex: searchEmailTerm, $options: 'i'}}]}).toArray()
-        return count.length
+        return await usersCollection.countDocuments({$or: [{login: {$regex: searchLoginTerm, $options: 'i'}}, {email: {$regex: searchEmailTerm, $options: 'i'}}]})
     },
 
     // async giveUserById(userId: string): Promise<UserType | null> {

@@ -18,31 +18,31 @@ export const usersRouter = Router({})
 
 usersRouter.post('/',
     authenticationGuardMiddleware,
-    ...userRouterValidationMiddleware,
+    userRouterValidationMiddleware,
     async (req: RequestWithBody<CreateNewUser>, res: Response) => {
 
         const newUser = await usersService.createNewUser(req.body.login, req.body.password, req.body.email)
+        if (!newUser) return res.sendStatus(404)
 
-        res.status(201).send(newUser)
+        return res.status(201).send(newUser)
     })
 
 usersRouter.get('/',
     ...usersQueryValidationMiddleware,
     async (req: RequestWithQuery<QueryParameters>, res: Response) => {
-    const pageWithUsers: ContentPageType = await usersService
-        .giveUsersPage(req.query.sortBy,
-                       req.query.sortDirection,
-                       req.query.pageNumber,
-                       req.query.pageSize,
-                       req.query.searchLoginTerm,
-                       req.query.searchEmailTerm)
+        const pageWithUsers: ContentPageType = await usersService.giveUsersPage(req.query.sortBy,
+            req.query.sortDirection,
+            req.query.pageNumber,
+            req.query.pageSize,
+            req.query.searchLoginTerm,
+            req.query.searchEmailTerm)
 
-    if (!pageWithUsers) {
-        return res.sendStatus(404)
-    }
+        if (!pageWithUsers) {
+            return res.sendStatus(404)
+        }
 
-    res.status(200).send(pageWithUsers)
-})
+        return res.status(200).send(pageWithUsers)
+    })
 
 usersRouter.delete('/:id',
     authenticationGuardMiddleware,
@@ -54,6 +54,6 @@ usersRouter.delete('/:id',
             return res.sendStatus(404)
         }
 
-        res.status(204)
+        return res.status(204)
     }
 )

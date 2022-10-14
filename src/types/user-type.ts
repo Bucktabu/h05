@@ -1,4 +1,4 @@
-import {ObjectId} from "mongodb";
+import {WithId} from "mongodb";
 
 export type UserType = {
     id: string,
@@ -9,15 +9,15 @@ export type UserType = {
 
 export type UsersType = UserType[]
 
-export type UserDBType = {
-    _id: ObjectId,
+export type UserDBType = WithId<{
     id: string,
     login: string,
     email: string,
     passwordHash: string,
     passwordSalt: string,
     createdAt: string
-}
+}>
+
 
 export type UsersDBType = UserDBType[]
 
