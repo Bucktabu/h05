@@ -54,6 +54,6 @@ usersRouter.delete('/:id',
             return res.sendStatus(404)
         }
 
-        return res.status(204)
+        return res.sendStatus(204)
     }
 )
