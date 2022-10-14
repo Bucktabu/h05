@@ -15,18 +15,18 @@ export const usersRepository = {
                     searchLoginTerm: string,
                     searchEmailTerm: string): Promise<UsersType> {
 
-        const filter: any = {}
-
-        if (searchLoginTerm) {
-            filter.login = {$regex: searchLoginTerm, $options: 'i'}
-        }
-
-        if (searchEmailTerm) {
-            filter.email = {$regex: searchEmailTerm, $options: 'i'}
-        }
+        // const filter: any = {}
+        //
+        // if (searchLoginTerm) {
+        //     filter.login = {$regex: searchLoginTerm, $options: 'i'}
+        // }
+        //
+        // if (searchEmailTerm) {
+        //     filter.email = {$regex: searchEmailTerm, $options: 'i'}
+        // }
 
         return await usersCollection
-            .find(filter, {projection: {_id: false}})
+            .find({$or: [{login: {$regex: searchLoginTerm, $options: 'i'}}, {email: {$regex: searchEmailTerm, $options: 'i'}}]}, {projection: {_id: false}})
             .sort(sortBy, sortDirection === 'asc' ? 1 : -1)
             .skip(giveSkipNumber(pageNumber, pageSize))
             .limit(Number(pageSize))
@@ -43,17 +43,7 @@ export const usersRepository = {
         //     return await blogsCollection.countDocuments({email: {$regex: searchEmailTerm, $options: 'i'}})
         // }
 
-        const filter: any = {}
-
-        if (searchLoginTerm) {
-            filter.login = {$regex: searchLoginTerm, $options: 'i'}
-        }
-
-        if (searchEmailTerm) {
-            filter.email = {$regex: searchEmailTerm, $options: 'i'}
-        }
-
-        const count =  await usersCollection.find(filter).toArray()
+        const count = await usersCollection.find({$or: [{login: {$regex: searchLoginTerm, $options: 'i'}}, {email: {$regex: searchEmailTerm, $options: 'i'}}]}).toArray()
         return count.length
     },
 
@@ -62,8 +52,7 @@ export const usersRepository = {
     // },
 
     async findUserByLoginOrEmail(loginOrEmail: string) {
-        const user = await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
-        return user
+        return await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
     },
 
     async deleteUserById(id: string): Promise<boolean> {

@@ -8,7 +8,7 @@ import {usersRouter} from "./routers/users-router";
 
 export const app = express()
 
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 3003
 
 app.use(express.json()) // add body-parser
 
