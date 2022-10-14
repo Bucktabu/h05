@@ -24,7 +24,7 @@ export const usersService = {
         const createdNewUser = await usersRepository.createNewUser(createNewUser)
         if (!createdNewUser) return null
 
-        return usersDBtoUserType(createNewUser)
+        return usersDBtoUserType(createdNewUser)
     },
 
     // async giveUserById(userId: string): Promise<UserType | null> {

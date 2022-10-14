@@ -5,14 +5,12 @@ import {BlogType} from "../types/blogs-type";
 import {PostType} from "../types/posts-type";
 import {UserDBType} from "../types/user-type";
 
-
-
 const mongoUri = process.env.MONGO_URI || 'mongodb://0.0.0.0:27017/?maxPoolSize=20&w=majority';
 
 const client = new MongoClient(mongoUri)
 const db = client.db('blogsAndPostsDb')
 
-export const blogsCollection = db.collection<BlogType>('blogs') // почему единственное число?
+export const blogsCollection = db.collection<BlogType>('blogs')
 export const postsCollection = db.collection<PostType>('posts')
 export const usersCollection = db.collection<UserDBType>('users')
 
